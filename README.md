@@ -1,1 +1,1 @@
-Gmail Cleaner webapp to select preferred mails only
+Gmail Cleaner webapp to select preferred mails only!
