@@ -5,7 +5,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 import pickle
 
 
-# --- Gmail Authentication ---
+# Gmaail auth
 SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
 
 def gmail_authenticate():
@@ -17,7 +17,7 @@ def gmail_authenticate():
         auth_url, _ = flow.authorization_url(prompt='consent')
         print(f"🔗 Please visit this URL to authorize the app:\n{auth_url}\n")
 
-        webbrowser.open(auth_url)  # Tries to open in default browser
+        webbrowser.open(auth_url) 
 
         code = input("📥 Paste the authorization code here: ")
         flow.fetch_token(code=code)
@@ -30,7 +30,7 @@ def gmail_authenticate():
         raise
 
 
-# --- Fetch Emails (subject + snippet) ---
+
 def get_emails(service, label_ids=['INBOX'], max_results=50):
     messages = service.users().messages().list(
         userId='me', labelIds=label_ids, maxResults=max_results
@@ -47,7 +47,7 @@ def get_emails(service, label_ids=['INBOX'], max_results=50):
         emails.append((msg['id'], combined_text))
     return emails
 
-# --- Predict and Trash Promotional Emails ---
+
 def delete_promotions(service, model, vectorizer, emails):
     for msg_id, text in emails:
         features = vectorizer.transform([text])
@@ -58,19 +58,19 @@ def delete_promotions(service, model, vectorizer, emails):
         else:
             print(f"✅ ❤Kept: {text[:60]}...")
 
-# --- Main Execution ---
+
 if __name__ == "__main__":
-    # Authenticate Gmail
+  
     service = gmail_authenticate()
 
-    # Load model and vectorizer
+   
     with open('model.pkl', 'rb') as f:
         model = pickle.load(f)
     with open('vectorizer.pkl', 'rb') as f:
         vectorizer = pickle.load(f)
 
-    # Get Emails
+   
     emails = get_emails(service, label_ids=['INBOX'], max_results=50)
 
-    # Predict and Delete
+   
     delete_promotions(service, model, vectorizer, emails)
